@@ -4,7 +4,7 @@
 const firebaseConfig = {
     apiKey: "AIzaSyBnfw0Ibphp5E0AB8xT4Fe5NMfVOyuOuEM",
     authDomain: "computer-info-site.firebaseapp.com",
-    databaseURL: "https://computer-info-site-default-rtdb.europe-west1.firebasedatabase.app"
+    databaseURL: "https://computer-info-site-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "computer-info-site",
     storageBucket: "computer-info-site.firebasestorage.app",
     messagingSenderId: "762797842096",
