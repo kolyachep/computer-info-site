@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет</title>
+    <!-- Подключаем Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
     <style>
         body { 
             background: url(background.jpeg);
@@ -65,6 +70,7 @@
             margin-top: 20px;
             padding: 20px;
             border-radius: 10px;
+            display: none;
         }
         .nav-box {
             background-color: white;
@@ -100,7 +106,7 @@
         .btn-admin {
             background-color: #dc3545;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 15px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -210,35 +216,22 @@
             margin-right: 10px;
             font-size: 1.2em;
         }
-        .action-buttons {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+        .loading {
             text-align: center;
+            padding: 20px;
         }
-        .btn-action {
-            background-color: #6c757d;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 0 5px;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            display: inline-block;
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
         }
-        .btn-action:hover {
-            background-color: #5a6268;
-            text-decoration: none;
-            color: white;
-        }
-        .btn-edit {
-            background-color: #17a2b8;
-        }
-        .btn-edit:hover {
-            background-color: #138496;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         .users-table {
             width: 100%;
@@ -262,22 +255,6 @@
         .users-table tr:hover {
             background-color: rgba(220, 53, 69, 0.1);
         }
-        .admin-only {
-            display: none;
-        }
-        @media (max-width: 768px) {
-            .profile-content {
-                flex-direction: column;
-            }
-            .btn-logout {
-                position: static;
-                margin-top: 15px;
-                width: 100%;
-            }
-            .profile-header {
-                text-align: center;
-            }
-        }
     </style>
 </head>
 <body>
@@ -297,44 +274,37 @@
                 <h2 id="infoTitle">📋 Ваши данные</h2>
                 <hr style="margin: 15px 0; border-color: #eee;">
                 <div class="user-info" id="userInfo">
-                    <!-- Сюда будут загружены данные пользователя -->
-                </div>
-                
-                <div class="action-buttons">
-                    <a href="register.html" class="btn-action btn-edit">✏️ Редактировать профиль</a>
-                    <a href="#" class="btn-action" onclick="changePassword()">🔒 Сменить пароль</a>
+                    <div class="loading" id="loadingInfo">
+                        <div class="loader"></div>
+                        <p>Загрузка данных...</p>
+                    </div>
                 </div>
                 
                 <!-- Административная секция -->
-                <div class="admin-only" id="adminSection">
-                    <div class="admin-section">
-                        <h2 class="admin-title">👑 Панель администратора</h2>
-                        <hr style="margin: 10px 0; border-color: #ffc107;">
-                        
-                        <div style="margin-bottom: 15px;">
-                            <button class="btn-admin" onclick="showAllUsers()">👥 Показать всех пользователей</button>
-                            <button class="btn-admin" onclick="clearAllUsers()">🗑️ Очистить всех пользователей</button>
-                            <button class="btn-admin" onclick="resetSite()">🔄 Сбросить сайт</button>
-                        </div>
-                        
-                        <div id="usersList" style="display: none;">
-                            <h3>Зарегистрированные пользователи:</h3>
-                            <table class="users-table" id="usersTable">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Имя пользователя</th>
-                                        <th>Email</th>
-                                        <th>Роль</th>
-                                        <th>Дата регистрации</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="usersTableBody">
-                                    <!-- Сюда будут загружены пользователи -->
-                                </tbody>
-                            </table>
-                            <p style="margin-top: 10px; font-size: 0.9em; color: #666;" id="usersCount"></p>
-                        </div>
+                <div class="admin-section" id="adminSection">
+                    <h2 class="admin-title">👑 Панель администратора</h2>
+                    <hr style="margin: 10px 0; border-color: #ffc107;">
+                    
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn-admin" onclick="showAllUsers()">👥 Показать пользователей</button>
+                    </div>
+                    
+                    <div id="usersList" style="display: none;">
+                        <h3>Зарегистрированные пользователи:</h3>
+                        <table class="users-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Имя</th>
+                                    <th>Роль</th>
+                                    <th>Дата регистрации</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Сюда будут загружены пользователи -->
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: #666;" id="usersCount"></p>
                     </div>
                 </div>
             </div>
@@ -370,260 +340,179 @@
                     </a>
                     <div class="nav-desc">Компьютерные термины и их определения</div>
                 </div>
-                
-                <div class="nav-box">
-                    <a href="register.html" class="nav-link">
-                        <span class="info-icon">👤</span> Управление аккаунтом
-                    </a>
-                    <div class="nav-desc">Регистрация нового пользователя или редактирование профиля</div>
-                </div>
-                
-                <!-- Административные ссылки -->
-                <div class="nav-box admin-only" id="adminNav">
-                    <a href="#" class="nav-link" onclick="showAllUsers()">
-                        <span class="admin-icon">👑</span> Административная панель
-                    </a>
-                    <div class="nav-desc">Управление пользователями и настройки сайта</div>
-                </div>
             </div>
         </div>
         
         <div class="bug-report">
             <h3>📩 Обратная связь</h3>
             <p>Если нашли ошибку (баг) или есть идеи по улучшению сайта, пишите нам на <a href="mailto:kolyachep777@mail.ru" class="email-link">почту</a></p>
-            <p><small>Мы ценим ваше мнение и постараемся ответить в кратчайшие сроки!</small></p>
         </div>
     </div>
     
     <script>
-        // Проверка авторизации
-        function checkAuth() {
+        // Проверка авторизации при загрузке страницы
+        document.addEventListener('DOMContentLoaded', async function() {
+            await checkAuthAndLoadData();
+        });
+        
+        // Проверка авторизации и загрузка данных
+        async function checkAuthAndLoadData() {
+            const currentUser = getCurrentUser();
             const isLoggedIn = localStorage.getItem('isLoggedIn');
-            if (!isLoggedIn || isLoggedIn !== 'true') {
+            
+            if (!currentUser || isLoggedIn !== 'true') {
                 alert('Для доступа к личному кабинету необходимо авторизоваться');
                 window.location.href = 'login.html';
-                return false;
-            }
-            return true;
-        }
-        
-        // Проверка администратора
-        function checkAdmin() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            return currentUser.role === 'admin' || currentUser.username === 'siteadmin';
-        }
-        
-        // Загрузка данных пользователя
-        function loadUserData() {
-            if (!checkAuth()) return;
-            
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const user = users.find(u => u.username === currentUser.username);
-            
-            const greeting = document.getElementById('userGreeting');
-            const userInfo = document.getElementById('userInfo');
-            const profileHeader = document.getElementById('profileHeader');
-            const adminSection = document.getElementById('adminSection');
-            const adminNav = document.getElementById('adminNav');
-            const infoTitle = document.getElementById('infoTitle');
-            
-            // Проверяем, является ли пользователь администратором
-            const isAdmin = checkAdmin();
-            
-            if (user || currentUser.username) {
-                const displayUser = user || currentUser;
-                const isUserAdmin = isAdmin || displayUser.role === 'admin';
-                
-                // Обновляем заголовок для администратора
-                if (isUserAdmin) {
-                    profileHeader.classList.add('admin-header');
-                    infoTitle.innerHTML = '👑 Данные администратора';
-                }
-                
-                // Приветствие с бейджем администратора
-                let greetingText = `<span class="welcome-icon">👋</span> Добро пожаловать, <strong>${displayUser.username}</strong>!`;
-                if (isUserAdmin) {
-                    greetingText += ` <span class="admin-badge">АДМИНИСТРАТОР</span>`;
-                }
-                greeting.innerHTML = greetingText;
-                
-                // Форматирование даты
-                const regDate = displayUser.registeredAt ? new Date(displayUser.registeredAt) : new Date();
-                const formattedDate = regDate.toLocaleDateString('ru-RU', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-                
-                // Отображение данных
-                let userInfoHTML = `
-                    <p><span class="info-icon">👤</span> <strong>Имя пользователя:</strong> ${displayUser.username}</p>
-                    <p><span class="info-icon">📧</span> <strong>Email:</strong> ${displayUser.email || 'Не указан'}</p>
-                    <p><span class="info-icon">📅</span> <strong>Дата регистрации:</strong> ${formattedDate}</p>
-                    <p><span class="info-icon">⏱️</span> <strong>В системе:</strong> ${calculateDaysSince(regDate)}</p>
-                `;
-                
-                if (isUserAdmin) {
-                    userInfoHTML += `<p><span class="admin-icon">👑</span> <strong>Роль:</strong> Администратор</p>`;
-                }
-                
-                userInfo.innerHTML = userInfoHTML;
-                
-                // Показываем административные элементы
-                if (isUserAdmin) {
-                    adminSection.style.display = 'block';
-                    adminNav.style.display = 'block';
-                    
-                    // Загружаем список пользователей
-                    loadUsersList();
-                }
-            } else {
-                greeting.innerHTML = `<span class="welcome-icon">👋</span> Добро пожаловать в личный кабинет!`;
-                userInfo.innerHTML = `
-                    <p><span class="info-icon">⚠️</span> Данные профиля не найдены</p>
-                    <p>Заполните данные в форме <a href="register.html" class="email-link">регистрации</a></p>
-                `;
-            }
-        }
-        
-        // Загрузка списка пользователей
-        function loadUsersList() {
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const tableBody = document.getElementById('usersTableBody');
-            
-            if (users.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет зарегистрированных пользователей</td></tr>';
                 return;
             }
             
-            let tableHTML = '';
-            users.forEach((user, index) => {
-                const regDate = user.registeredAt ? new Date(user.registeredAt).toLocaleDateString('ru-RU') : 'Не указана';
-                const role = user.role === 'admin' || user.username === 'siteadmin' ? 'Администратор' : 'Пользователь';
-                const rowClass = user.username === 'siteadmin' ? 'style="background-color: rgba(255, 193, 7, 0.2);"' : '';
+            try {
+                // Получаем данные пользователя
+                const userData = await getUserData(currentUser.uid);
                 
-                tableHTML += `
-                    <tr ${rowClass}>
-                        <td>${index + 1}</td>
-                        <td>${user.username} ${user.username === 'siteadmin' ? '👑' : ''}</td>
-                        <td>${user.email || 'Не указан'}</td>
-                        <td>${role}</td>
-                        <td>${regDate}</td>
-                    </tr>
-                `;
-            });
-            
-            tableBody.innerHTML = tableHTML;
-            document.getElementById('usersCount').textContent = `Всего пользователей: ${users.length}`;
+                if (!userData) {
+                    alert('Данные пользователя не найдены');
+                    logout();
+                    return;
+                }
+                
+                displayUserInfo(userData);
+                
+                // Если пользователь - администратор, показываем админ-панель
+                if (userData.role === 'admin') {
+                    showAdminPanel();
+                }
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                document.getElementById('loadingInfo').innerHTML = 
+                    '<p style="color: #f44336;">Ошибка загрузки данных</p>';
+            }
         }
         
-        // Показать всех пользователей
-        function showAllUsers() {
+        // Отображение информации о пользователе
+        function displayUserInfo(userData) {
+            const greeting = document.getElementById('userGreeting');
+            const userInfo = document.getElementById('userInfo');
+            const profileHeader = document.getElementById('profileHeader');
+            const infoTitle = document.getElementById('infoTitle');
+            
+            // Если пользователь - администратор
+            if (userData.role === 'admin') {
+                profileHeader.classList.add('admin-header');
+                infoTitle.innerHTML = '👑 Данные администратора';
+                greeting.innerHTML = `<span class="welcome-icon">👑</span> Добро пожаловать, <strong>${userData.username}</strong>! <span class="admin-badge">АДМИНИСТРАТОР</span>`;
+            } else {
+                greeting.innerHTML = `<span class="welcome-icon">👋</span> Добро пожаловать, <strong>${userData.username}</strong>!`;
+            }
+            
+            // Форматирование даты
+            const createdAt = userData.createdAt ? new Date(userData.createdAt) : new Date();
+            const formattedDate = createdAt.toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const lastLogin = userData.lastLogin ? new Date(userData.lastLogin) : new Date();
+            const formattedLastLogin = lastLogin.toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Отображение данных
+            let userInfoHTML = `
+                <p><span class="info-icon">👤</span> <strong>Имя пользователя:</strong> ${userData.username}</p>
+                <p><span class="info-icon">📧</span> <strong>Email:</strong> ${userData.email || 'Не указан'}</p>
+                <p><span class="info-icon">🎯</span> <strong>Роль:</strong> ${userData.role === 'admin' ? 'Администратор' : 'Пользователь'}</p>
+                <p><span class="info-icon">📅</span> <strong>Дата регистрации:</strong> ${formattedDate}</p>
+                <p><span class="info-icon">⏱️</span> <strong>Последний вход:</strong> ${formattedLastLogin}</p>
+            `;
+            
+            userInfo.innerHTML = userInfoHTML;
+        }
+        
+        // Показать админ-панель
+        function showAdminPanel() {
+            document.getElementById('adminSection').style.display = 'block';
+        }
+        
+        // Показать всех пользователей (для администратора)
+        async function showAllUsers() {
             const usersList = document.getElementById('usersList');
+            
             if (usersList.style.display === 'none') {
-                usersList.style.display = 'block';
-                loadUsersList();
+                try {
+                    const result = await getAllUsers();
+                    
+                    if (result.success) {
+                        displayUsersTable(result.users);
+                        usersList.style.display = 'block';
+                    } else {
+                        alert('Ошибка: ' + result.error);
+                    }
+                    
+                } catch (error) {
+                    console.error('Ошибка получения пользователей:', error);
+                    alert('Ошибка получения данных');
+                }
             } else {
                 usersList.style.display = 'none';
             }
         }
         
-        // Очистить всех пользователей (кроме администратора)
-        function clearAllUsers() {
-            if (!confirm('Вы уверены, что хотите удалить всех пользователей (кроме администратора)?')) {
+        // Отображение таблицы пользователей
+        function displayUsersTable(users) {
+            const tableBody = document.getElementById('usersTableBody');
+            
+            if (!users || Object.keys(users).length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Нет зарегистрированных пользователей</td></tr>';
+                document.getElementById('usersCount').textContent = 'Всего пользователей: 0';
                 return;
             }
             
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const adminUsers = users.filter(user => user.role === 'admin' || user.username === 'siteadmin');
+            let tableHTML = '';
+            let userCount = 0;
             
-            localStorage.setItem('users', JSON.stringify(adminUsers));
-            alert(`Удалено ${users.length - adminUsers.length} пользователей. Остался только администратор.`);
+            Object.entries(users).forEach(([userId, user]) => {
+                if (user) {
+                    userCount++;
+                    const createdAt = user.createdAt ? new Date(user.createdAt).toLocaleDateString('ru-RU') : 'Неизвестно';
+                    
+                    tableHTML += `
+                        <tr>
+                            <td>${user.email || 'Не указан'}</td>
+                            <td>${user.username || 'Не указано'} ${user.role === 'admin' ? '👑' : ''}</td>
+                            <td>${user.role === 'admin' ? 'Администратор' : 'Пользователь'}</td>
+                            <td>${createdAt}</td>
+                        </tr>
+                    `;
+                }
+            });
             
-            // Обновляем список
-            loadUsersList();
-        }
-        
-        // Сбросить сайт (очистить все данные)
-        function resetSite() {
-            if (!confirm('ВНИМАНИЕ! Вы уверены, что хотите полностью сбросить сайт?\n\nБудут удалены:\n• Все пользователи\n• Все настройки\n• Данные сессий\n\nПосле сброса будет создан только администратор с данными:\nЛогин: siteadmin\nEmail: admin@site.com\nПароль: 5541')) {
-                return;
-            }
-            
-            // Очищаем все данные
-            localStorage.clear();
-            
-            // Создаем администратора по умолчанию
-            const adminUser = {
-                username: 'siteadmin',
-                email: 'admin@site.com',
-                password: '5541',
-                registeredAt: new Date().toISOString(),
-                role: 'admin'
-            };
-            
-            localStorage.setItem('users', JSON.stringify([adminUser]));
-            localStorage.setItem('currentUser', JSON.stringify({
-                username: 'siteadmin',
-                email: 'admin@site.com',
-                role: 'admin'
-            }));
-            localStorage.setItem('isLoggedIn', 'true');
-            
-            alert('Сайт успешно сброшен! Вы вошли как администратор.');
-            window.location.reload();
-        }
-        
-        // Расчет количества дней в системе
-        function calculateDaysSince(date) {
-            const now = new Date();
-            const diffTime = Math.abs(now - date);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays === 1) return '1 день';
-            if (diffDays < 30) return `${diffDays} дней`;
-            
-            const months = Math.floor(diffDays / 30);
-            if (months === 1) return '1 месяц';
-            if (months < 12) return `${months} месяцев`;
-            
-            const years = Math.floor(months / 12);
-            const remainingMonths = months % 12;
-            
-            if (remainingMonths === 0) {
-                return years === 1 ? '1 год' : `${years} лет`;
-            } else {
-                return years === 1 ? 
-                    `1 год и ${remainingMonths} месяцев` : 
-                    `${years} лет и ${remainingMonths} месяцев`;
-            }
+            tableBody.innerHTML = tableHTML;
+            document.getElementById('usersCount').textContent = `Всего пользователей: ${userCount}`;
         }
         
         // Выход из системы
-        function logout() {
+        async function logout() {
             if (confirm('Вы уверены, что хотите выйти из аккаунта?')) {
-                localStorage.removeItem('isLoggedIn');
-                localStorage.removeItem('currentUser');
-                window.location.href = 'index.html';
+                try {
+                    await logoutUser();
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('currentUser');
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error('Ошибка выхода:', error);
+                    alert('Ошибка при выходе из системы');
+                }
             }
         }
-        
-        // Смена пароля (демо-функция)
-        function changePassword() {
-            alert('В демо-версии функция смены пароля недоступна.\n\nДля изменения пароля:\n1. Выйдите из аккаунта\n2. Зарегистрируйтесь заново с новым паролем\n\nВ реальном приложении здесь была бы форма смены пароля с проверкой старого пароля.');
-        }
-        
-        // Загружаем данные при загрузке страницы
-        document.addEventListener('DOMContentLoaded', loadUserData);
-        
-        // Обновляем данные каждую минуту (для актуальности "В системе")
-        setInterval(() => {
-            const userInfo = document.getElementById('userInfo');
-            if (userInfo && userInfo.innerHTML.includes('В системе:')) {
-                loadUserData();
-            }
-        }, 60000);
     </script>
 </body>
 </html>

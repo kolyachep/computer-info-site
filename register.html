@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация</title>
+    <!-- Подключаем Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
     <style>
+        /* Стили остаются без изменений */
         body { 
             background: url(background.jpeg);
             background-size: cover;
@@ -102,6 +108,24 @@
             margin-top: 5px;
             display: none;
         }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -113,7 +137,7 @@
             <div class="form-group">
                 <label>Имя пользователя:</label>
                 <input type="text" name="username" required 
-                       placeholder="Введите имя пользователя" 
+                       placeholder="Придумайте имя пользователя" 
                        minlength="3" maxlength="20">
                 <div class="error-message" id="usernameError"></div>
             </div>
@@ -128,7 +152,7 @@
             <div class="form-group">
                 <label>Пароль:</label>
                 <input type="password" name="password" required 
-                       placeholder="Введите пароль" 
+                       placeholder="Придумайте пароль" 
                        minlength="6">
                 <div class="error-message" id="passwordError"></div>
             </div>
@@ -147,7 +171,12 @@
                 </label>
             </div>
             
-            <button type="submit" class="btn">Зарегистрироваться</button>
+            <div class="loading" id="loading">
+                <div class="loader"></div>
+                <p>Регистрация...</p>
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">Зарегистрироваться</button>
             <div class="success-message" id="successMessage"></div>
         </form>
         
@@ -158,7 +187,7 @@
     </div>
     
     <script>
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Скрываем все предыдущие сообщения об ошибках
@@ -171,7 +200,7 @@
             
             let isValid = true;
             
-            // Проверка имени пользователя
+            // Валидация
             if (username.length < 3) {
                 showError('usernameError', 'Имя пользователя должно быть не менее 3 символов');
                 isValid = false;
@@ -182,19 +211,16 @@
                 isValid = false;
             }
             
-            // Проверка email
             if (!isValidEmail(email)) {
                 showError('emailError', 'Введите корректный email адрес');
                 isValid = false;
             }
             
-            // Проверка пароля
             if (password.length < 6) {
                 showError('passwordError', 'Пароль должен быть не менее 6 символов');
                 isValid = false;
             }
             
-            // Проверка совпадения паролей
             if (password !== confirmPassword) {
                 showError('confirmPasswordError', 'Пароли не совпадают');
                 isValid = false;
@@ -204,43 +230,51 @@
                 return;
             }
             
-            // Проверяем, нет ли уже пользователя с таким email или именем
-            const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-            const userExists = existingUsers.some(user => 
-                user.email === email || user.username === username
-            );
+            // Показываем индикатор загрузки
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
             
-            if (userExists) {
-                showError('emailError', 'Пользователь с таким email или именем уже существует');
-                return;
+            try {
+                // Регистрируем пользователя через Firebase
+                const result = await registerUser(email, password, username);
+                
+                if (result.success) {
+                    let successMessage = 'Регистрация успешна!';
+                    
+                    // Если пользователь зарегистрировался с админским email
+                    if (result.role === 'admin') {
+                        successMessage += ' Вы зарегистрированы как администратор.';
+                    }
+                    
+                    document.getElementById('successMessage').textContent = successMessage;
+                    document.getElementById('successMessage').style.display = 'block';
+                    
+                    // Сохраняем данные в localStorage для быстрого доступа
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        uid: result.user.uid,
+                        username: username,
+                        email: email,
+                        role: result.role
+                    }));
+                    localStorage.setItem('isLoggedIn', 'true');
+                    
+                    // Перенаправляем через 2 секунды
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 2000);
+                    
+                } else {
+                    showError('emailError', result.error);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('submitBtn').disabled = false;
+                }
+                
+            } catch (error) {
+                console.error('Ошибка регистрации:', error);
+                showError('emailError', 'Ошибка регистрации: ' + error.message);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
             }
-            
-            // Сохраняем нового пользователя
-            const userData = {
-                username: username,
-                email: email,
-                password: password, // В реальном приложении пароль нужно хэшировать!
-                registeredAt: new Date().toISOString()
-            };
-            
-            existingUsers.push(userData);
-            localStorage.setItem('users', JSON.stringify(existingUsers));
-            
-            // Сохраняем текущую сессию
-            localStorage.setItem('currentUser', JSON.stringify({
-                username: username,
-                email: email
-            }));
-            localStorage.setItem('isLoggedIn', 'true');
-            
-            // Показываем сообщение об успехе
-            document.getElementById('successMessage').textContent = 'Регистрация успешна! Перенаправляем...';
-            document.getElementById('successMessage').style.display = 'block';
-            
-            // Перенаправляем через 1 секунду
-            setTimeout(() => {
-                window.location.href = 'profile.html';
-            }, 1000);
         });
         
         // Валидация имени пользователя
@@ -280,17 +314,6 @@
                 }
             });
         });
-        if (existingUsers.length === 0) {
-        const adminUser = {
-            username: 'siteadmin',
-            email: 'admin@site.com',
-            password: '5541',
-            registeredAt: new Date().toISOString(),
-            role: 'admin'
-            };
-        existingUsers.push(adminUser);
-        localStorage.setItem('users', JSON.stringify(existingUsers));
-        }
     </script>
 </body>
 </html>
