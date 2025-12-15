@@ -1,5 +1,6 @@
-// firebase-config.js
-// Это ваша уникальная конфигурация
+// firebase-config.js - для Firebase 8
+
+// 1. Конфигурация Firebase (ЗАМЕНИТЕ НА СВОЮ!)
 const firebaseConfig = {
     apiKey: "AIzaSyA1B2C3d4E5F6G7H8I9J0K1L2M3N4O5P6Q",
     authDomain: "computer-site-12345.firebaseapp.com",
@@ -10,49 +11,18 @@ const firebaseConfig = {
     appId: "1:123456789012:web:abcdef1234567890abcdef"
 };
 
-// Объекты будут инициализированы позже
-let auth = null;
-let database = null;
-let isFirebaseInitialized = false;
+// 2. Инициализация Firebase
+firebase.initializeApp(firebaseConfig);
 
-// Список админских email
+// 3. Получаем ссылки на сервисы
+const auth = firebase.auth();
+const database = firebase.database();
+
+// 4. Список админских email
 const ADMIN_EMAILS = ['admin@site.com'];
 
-// Функция инициализации Firebase
-function initializeFirebase() {
-    try {
-        // Проверяем, не инициализирован ли Firebase уже
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        
-        // Инициализируем сервисы
-        auth = firebase.auth();
-        database = firebase.database();
-        isFirebaseInitialized = true;
-        
-        console.log('✅ Firebase успешно инициализирован');
-        return true;
-    } catch (error) {
-        console.error('❌ Ошибка инициализации Firebase:', error);
-        return false;
-    }
-}
-
-// Проверка инициализации
-function ensureFirebaseInitialized() {
-    if (!isFirebaseInitialized) {
-        return initializeFirebase();
-    }
-    return true;
-}
-
-// Функция для регистрации пользователя
+// 5. Функция для регистрации пользователя
 async function registerUser(email, password, username) {
-    if (!ensureFirebaseInitialized()) {
-        return { success: false, error: 'Firebase не инициализирован' };
-    }
-    
     try {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
@@ -75,12 +45,8 @@ async function registerUser(email, password, username) {
     }
 }
 
-// Функция для входа пользователя
+// 6. Функция для входа пользователя
 async function loginUser(email, password) {
-    if (!ensureFirebaseInitialized()) {
-        return { success: false, error: 'Firebase не инициализирован' };
-    }
-    
     try {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
@@ -100,28 +66,18 @@ async function loginUser(email, password) {
     }
 }
 
-// Функция для выхода
+// 7. Функция для выхода
 function logoutUser() {
-    if (!ensureFirebaseInitialized()) {
-        return Promise.reject('Firebase не инициализирован');
-    }
     return auth.signOut();
 }
 
-// Получение текущего пользователя
+// 8. Получение текущего пользователя
 function getCurrentUser() {
-    if (!ensureFirebaseInitialized()) {
-        return null;
-    }
     return auth.currentUser;
 }
 
-// Получение данных пользователя
+// 9. Получение данных пользователя
 async function getUserData(userId) {
-    if (!ensureFirebaseInitialized()) {
-        return null;
-    }
-    
     try {
         const snapshot = await database.ref('users/' + userId).once('value');
         return snapshot.val();
@@ -131,7 +87,7 @@ async function getUserData(userId) {
     }
 }
 
-// Проверка, является ли пользователь администратором
+// 10. Проверка, является ли пользователь администратором
 async function isAdmin() {
     const user = getCurrentUser();
     if (!user) return false;
@@ -140,19 +96,5 @@ async function isAdmin() {
     return userData && userData.role === 'admin';
 }
 
-// Автоматическая инициализация при загрузке скрипта
-document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем, загружен ли Firebase
-    if (typeof firebase !== 'undefined') {
-        initializeFirebase();
-    } else {
-        console.warn('Firebase SDK еще не загружен, инициализация отложена');
-        
-        // Пытаемся инициализировать позже
-        setTimeout(() => {
-            if (typeof firebase !== 'undefined') {
-                initializeFirebase();
-            }
-        }, 1000);
-    }
-});
+// 11. Выводим сообщение об успешной инициализации
+console.log('✅ Firebase v8 инициализирован успешно!');
