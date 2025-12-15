@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация</title>
-    <!-- Подключаем Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="firebase-config.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
-        /* Стили остаются без изменений */
         body { 
             background: url(background.jpeg);
             background-size: cover;
@@ -186,6 +184,9 @@
         </div>
     </div>
     
+    <!-- Подключаем Firebase конфигурацию ПОСЛЕ формы -->
+    <script src="firebase-config.js"></script>
+    
     <script>
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -241,7 +242,7 @@
                 if (result.success) {
                     let successMessage = 'Регистрация успешна!';
                     
-                    // Если пользователь зарегистрировался с админским email
+                    // Если пользователь - администратор
                     if (result.role === 'admin') {
                         successMessage += ' Вы зарегистрированы как администратор.';
                     }
@@ -249,7 +250,7 @@
                     document.getElementById('successMessage').textContent = successMessage;
                     document.getElementById('successMessage').style.display = 'block';
                     
-                    // Сохраняем данные в localStorage для быстрого доступа
+                    // Сохраняем данные в localStorage
                     localStorage.setItem('currentUser', JSON.stringify({
                         uid: result.user.uid,
                         username: username,

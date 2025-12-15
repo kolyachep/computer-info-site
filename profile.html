@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет</title>
-    <!-- Подключаем Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="firebase-config.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         body { 
             background: url(background.jpeg);
@@ -265,7 +264,10 @@
             <h1>Личный кабинет</h1>
             
             <div class="user-greeting" id="userGreeting">
-                <!-- Сюда будет вставлено приветствие -->
+                <div class="loading" id="loadingGreeting">
+                    <div class="loader"></div>
+                    <p>Загрузка...</p>
+                </div>
             </div>
         </div>
         
@@ -349,6 +351,9 @@
         </div>
     </div>
     
+    <!-- Подключаем Firebase конфигурацию -->
+    <script src="firebase-config.js"></script>
+    
     <script>
         // Проверка авторизации при загрузке страницы
         document.addEventListener('DOMContentLoaded', async function() {
@@ -367,12 +372,13 @@
             }
             
             try {
-                // Получаем данные пользователя
+                // Получаем данные пользователя из Firebase
                 const userData = await getUserData(currentUser.uid);
                 
                 if (!userData) {
-                    alert('Данные пользователя не найдены');
-                    logout();
+                    // Если данных нет в Firebase, используем данные из localStorage
+                    const localUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    displayUserInfo(localUser);
                     return;
                 }
                 
@@ -385,8 +391,9 @@
                 
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
-                document.getElementById('loadingInfo').innerHTML = 
-                    '<p style="color: #f44336;">Ошибка загрузки данных</p>';
+                // Используем данные из localStorage как резерв
+                const localUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                displayUserInfo(localUser);
             }
         }
         
@@ -396,6 +403,10 @@
             const userInfo = document.getElementById('userInfo');
             const profileHeader = document.getElementById('profileHeader');
             const infoTitle = document.getElementById('infoTitle');
+            
+            // Убираем индикатор загрузки
+            document.getElementById('loadingGreeting').style.display = 'none';
+            document.getElementById('loadingInfo').style.display = 'none';
             
             // Если пользователь - администратор
             if (userData.role === 'admin') {
@@ -407,27 +418,33 @@
             }
             
             // Форматирование даты
-            const createdAt = userData.createdAt ? new Date(userData.createdAt) : new Date();
-            const formattedDate = createdAt.toLocaleDateString('ru-RU', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            let formattedDate = 'Неизвестно';
+            if (userData.createdAt) {
+                const createdAt = new Date(userData.createdAt);
+                formattedDate = createdAt.toLocaleDateString('ru-RU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
             
-            const lastLogin = userData.lastLogin ? new Date(userData.lastLogin) : new Date();
-            const formattedLastLogin = lastLogin.toLocaleDateString('ru-RU', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            let formattedLastLogin = 'Неизвестно';
+            if (userData.lastLogin) {
+                const lastLogin = new Date(userData.lastLogin);
+                formattedLastLogin = lastLogin.toLocaleDateString('ru-RU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
             
             // Отображение данных
             let userInfoHTML = `
-                <p><span class="info-icon">👤</span> <strong>Имя пользователя:</strong> ${userData.username}</p>
+                <p><span class="info-icon">👤</span> <strong>Имя пользователя:</strong> ${userData.username || 'Не указано'}</p>
                 <p><span class="info-icon">📧</span> <strong>Email:</strong> ${userData.email || 'Не указан'}</p>
                 <p><span class="info-icon">🎯</span> <strong>Роль:</strong> ${userData.role === 'admin' ? 'Администратор' : 'Пользователь'}</p>
                 <p><span class="info-icon">📅</span> <strong>Дата регистрации:</strong> ${formattedDate}</p>
@@ -482,7 +499,11 @@
             Object.entries(users).forEach(([userId, user]) => {
                 if (user) {
                     userCount++;
-                    const createdAt = user.createdAt ? new Date(user.createdAt).toLocaleDateString('ru-RU') : 'Неизвестно';
+                    let createdAt = 'Неизвестно';
+                    if (user.createdAt) {
+                        const date = new Date(user.createdAt);
+                        createdAt = date.toLocaleDateString('ru-RU');
+                    }
                     
                     tableHTML += `
                         <tr>

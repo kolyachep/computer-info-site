@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Словарь терминов</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         body { 
             background: url(background.jpeg);
@@ -224,6 +228,9 @@
         </address>
     </div>
     
+    <!-- Подключаем Firebase конфигурацию -->
+    <script src="firebase-config.js"></script>
+    
     <script>
         // Функция поиска терминов
         document.getElementById('searchTerm').addEventListener('input', function() {
@@ -252,7 +259,34 @@
         document.addEventListener('DOMContentLoaded', function() {
             const terms = document.querySelectorAll('.glossary-item');
             document.getElementById('termCount').textContent = terms.length;
+            
+            // Проверка статуса пользователя
+            updateUserStatus();
         });
+        
+        function updateUserStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const authLinks = document.querySelector('.auth-links');
+            
+            if (isLoggedIn === 'true' && currentUser.username) {
+                authLinks.innerHTML = `
+                    <font face="monotype corsiva" size="5">
+                        [Вы вошли как: <strong>${currentUser.username}</strong>] &nbsp;
+                        [<a href="profile.html">Личный кабинет</a>] &nbsp;
+                        [<a href="#" onclick="logout()">Выйти</a>]
+                    </font>
+                `;
+            }
+        }
+        
+        function logout() {
+            if (confirm('Выйти из аккаунта?')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            }
+        }
         
         // Анимация при клике на термин
         document.querySelectorAll('.glossary-item').forEach(item => {

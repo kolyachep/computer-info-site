@@ -11,17 +11,17 @@ const firebaseConfig = {
     measurementId: "G-Q4HPBS1YPW"
   };
 
-// 2. Инициализация Firebase
+// Инициализация Firebase
 firebase.initializeApp(firebaseConfig);
 
-// 3. Получаем ссылки на сервисы
+// Получаем сервисы
 const auth = firebase.auth();
 const database = firebase.database();
 
-// 4. Список админских email
+// Список админских email (можно добавить несколько)
 const ADMIN_EMAILS = ['admin@site.com'];
 
-// 5. Функция для регистрации пользователя
+// Функция для регистрации пользователя
 async function registerUser(email, password, username) {
     try {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
@@ -45,7 +45,7 @@ async function registerUser(email, password, username) {
     }
 }
 
-// 6. Функция для входа пользователя
+// Функция для входа пользователя
 async function loginUser(email, password) {
     try {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
@@ -66,17 +66,17 @@ async function loginUser(email, password) {
     }
 }
 
-// 7. Функция для выхода
+// Функция для выхода
 function logoutUser() {
     return auth.signOut();
 }
 
-// 8. Получение текущего пользователя
+// Получение текущего пользователя
 function getCurrentUser() {
     return auth.currentUser;
 }
 
-// 9. Получение данных пользователя
+// Получение данных пользователя
 async function getUserData(userId) {
     try {
         const snapshot = await database.ref('users/' + userId).once('value');
@@ -87,7 +87,7 @@ async function getUserData(userId) {
     }
 }
 
-// 10. Проверка, является ли пользователь администратором
+// Проверка, является ли пользователь администратором
 async function isAdmin() {
     const user = getCurrentUser();
     if (!user) return false;
@@ -96,5 +96,26 @@ async function isAdmin() {
     return userData && userData.role === 'admin';
 }
 
-// 11. Выводим сообщение об успешной инициализации
-console.log('✅ Firebase v8 инициализирован успешно!');
+// Получение всех пользователей (только для админов)
+async function getAllUsers() {
+    try {
+        const user = getCurrentUser();
+        if (!user) return { success: false, error: 'Не авторизован' };
+        
+        const userData = await getUserData(user.uid);
+        if (!userData || userData.role !== 'admin') {
+            return { success: false, error: 'Нет прав администратора' };
+        }
+        
+        const snapshot = await database.ref('users').once('value');
+        const users = snapshot.val();
+        
+        return { success: true, users: users };
+        
+    } catch (error) {
+        console.error('Ошибка получения пользователей:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+console.log('✅ Firebase конфигурация загружена');
