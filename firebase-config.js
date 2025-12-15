@@ -10,27 +10,55 @@ const firebaseConfig = {
     appId: "1:123456789012:web:abcdef1234567890abcdef"
 };
 
-// Инициализация Firebase
-firebase.initializeApp(firebaseConfig);
+// Объекты будут инициализированы позже
+let auth = null;
+let database = null;
+let isFirebaseInitialized = false;
 
-// Получаем ссылки на сервисы
-const auth = firebase.auth();
-const database = firebase.database();
-
-// Список админских email (можно расширять)
+// Список админских email
 const ADMIN_EMAILS = ['admin@site.com'];
+
+// Функция инициализации Firebase
+function initializeFirebase() {
+    try {
+        // Проверяем, не инициализирован ли Firebase уже
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        // Инициализируем сервисы
+        auth = firebase.auth();
+        database = firebase.database();
+        isFirebaseInitialized = true;
+        
+        console.log('✅ Firebase успешно инициализирован');
+        return true;
+    } catch (error) {
+        console.error('❌ Ошибка инициализации Firebase:', error);
+        return false;
+    }
+}
+
+// Проверка инициализации
+function ensureFirebaseInitialized() {
+    if (!isFirebaseInitialized) {
+        return initializeFirebase();
+    }
+    return true;
+}
 
 // Функция для регистрации пользователя
 async function registerUser(email, password, username) {
+    if (!ensureFirebaseInitialized()) {
+        return { success: false, error: 'Firebase не инициализирован' };
+    }
+    
     try {
-        // 1. Создаем пользователя в Firebase Authentication
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
-        // 2. Определяем роль (админ или обычный пользователь)
         const role = ADMIN_EMAILS.includes(email.toLowerCase()) ? 'admin' : 'user';
         
-        // 3. Сохраняем дополнительные данные в Realtime Database
         await database.ref('users/' + user.uid).set({
             username: username,
             email: email,
@@ -49,16 +77,18 @@ async function registerUser(email, password, username) {
 
 // Функция для входа пользователя
 async function loginUser(email, password) {
+    if (!ensureFirebaseInitialized()) {
+        return { success: false, error: 'Firebase не инициализирован' };
+    }
+    
     try {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
-        // Обновляем время последнего входа
         await database.ref('users/' + user.uid).update({
             lastLogin: firebase.database.ServerValue.TIMESTAMP
         });
         
-        // Получаем данные пользователя из базы
         const userSnapshot = await database.ref('users/' + user.uid).once('value');
         const userData = userSnapshot.val();
         
@@ -72,21 +102,26 @@ async function loginUser(email, password) {
 
 // Функция для выхода
 function logoutUser() {
+    if (!ensureFirebaseInitialized()) {
+        return Promise.reject('Firebase не инициализирован');
+    }
     return auth.signOut();
-}
-
-// Проверка авторизации
-function checkAuth(callback) {
-    auth.onAuthStateChanged(callback);
 }
 
 // Получение текущего пользователя
 function getCurrentUser() {
+    if (!ensureFirebaseInitialized()) {
+        return null;
+    }
     return auth.currentUser;
 }
 
 // Получение данных пользователя
 async function getUserData(userId) {
+    if (!ensureFirebaseInitialized()) {
+        return null;
+    }
+    
     try {
         const snapshot = await database.ref('users/' + userId).once('value');
         return snapshot.val();
@@ -105,49 +140,19 @@ async function isAdmin() {
     return userData && userData.role === 'admin';
 }
 
-// Получение всех пользователей (только для админов)
-async function getAllUsers() {
-    try {
-        const user = getCurrentUser();
-        if (!user) return { success: false, error: 'Не авторизован' };
+// Автоматическая инициализация при загрузке скрипта
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем, загружен ли Firebase
+    if (typeof firebase !== 'undefined') {
+        initializeFirebase();
+    } else {
+        console.warn('Firebase SDK еще не загружен, инициализация отложена');
         
-        const userData = await getUserData(user.uid);
-        if (!userData || userData.role !== 'admin') {
-            return { success: false, error: 'Нет прав администратора' };
-        }
-        
-        const snapshot = await database.ref('users').once('value');
-        const users = snapshot.val();
-        
-        return { success: true, users: users };
-        
-    } catch (error) {
-        console.error('Ошибка получения пользователей:', error);
-        return { success: false, error: error.message };
+        // Пытаемся инициализировать позже
+        setTimeout(() => {
+            if (typeof firebase !== 'undefined') {
+                initializeFirebase();
+            }
+        }, 1000);
     }
-}
-
-// Удаление пользователя (только для админов)
-async function deleteUser(userId) {
-    try {
-        const user = getCurrentUser();
-        if (!user) return { success: false, error: 'Не авторизован' };
-        
-        const userData = await getUserData(user.uid);
-        if (!userData || userData.role !== 'admin') {
-            return { success: false, error: 'Нет прав администратора' };
-        }
-        
-        // Не позволяем удалить себя
-        if (userId === user.uid) {
-            return { success: false, error: 'Нельзя удалить себя' };
-        }
-        
-        await database.ref('users/' + userId).remove();
-        return { success: true };
-        
-    } catch (error) {
-        console.error('Ошибка удаления пользователя:', error);
-        return { success: false, error: error.message };
-    }
-}
+});
