@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <style>
+        body { 
+            background: url(background.jpeg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin: 100px auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #007BFF, transparent);
+            margin: 20px 0;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+        input:focus {
+            border-color: #007BFF;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        .btn {
+            background-color: #007BFF;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .nav-links {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .nav-links a {
+            color: #007BFF;
+            text-decoration: none;
+            font-family: 'Monotype Corsiva', cursive;
+            font-size: 18px;
+            margin: 0 10px;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .success-message {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+        }
+        .remember-forgot label {
+            display: inline;
+            font-weight: normal;
+            margin: 0;
+        }
+        .remember-forgot a {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .remember-forgot a:hover {
+            text-decoration: underline;
+        }
+        .demo-info {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .demo-info strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Вход в систему</h1>
+        <hr>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Имя пользователя или Email:</label>
+                <input type="text" name="login" required 
+                       placeholder="Введите имя пользователя или email">
+                <div class="error-message" id="loginError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Пароль:</label>
+                <input type="password" name="password" required 
+                       placeholder="Введите пароль">
+                <div class="error-message" id="passwordError"></div>
+            </div>
+            
+            <div class="remember-forgot">
+                <label>
+                    <input type="checkbox" name="remember">
+                    Запомнить меня
+                </label>
+                <a href="#" onclick="showForgotPassword()">Забыли пароль?</a>
+            </div>
+            
+            <button type="submit" class="btn">Войти</button>
+            <div class="success-message" id="successMessage"></div>
+        </form>
+        
+        <div class="demo-info">
+            <strong>Демо-аккаунты:</strong><br>
+            • Имя: <strong>user1</strong> | Email: <strong>test@example.com</strong> | Пароль: <strong>любой</strong><br>
+            • Или зарегистрируйте новый аккаунт
+        </div>
+        
+        <div class="nav-links">
+            <a href="index.html">На главную</a> &nbsp; | &nbsp;
+            <a href="register.html">Нет аккаунта? Зарегистрироваться</a>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Скрываем все предыдущие сообщения об ошибках
+            hideAllErrors();
+            
+            const login = this.login.value.trim();
+            const password = this.password.value;
+            const rememberMe = this.remember.checked;
+            
+            // Получаем список пользователей из localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Ищем пользователя по имени пользователя или email
+            const user = users.find(u => 
+                u.username === login || u.email === login
+            );
+            
+            if (!user) {
+                showError('loginError', 'Пользователь не найден');
+                return;
+            }
+            
+            // В реальном приложении здесь должно быть сравнение хэшей паролей
+            // Для демо-версии просто проверяем, что пароль не пустой
+            if (!password) {
+                showError('passwordError', 'Введите пароль');
+                return;
+            }
+            
+            // В демо-версии принимаем любой пароль
+            // В реальном приложении: if (user.password !== hash(password))
+            
+            // Сохраняем текущую сессию
+            localStorage.setItem('currentUser', JSON.stringify({
+                username: user.username,
+                email: user.email
+            }));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Если выбрано "Запомнить меня"
+            if (rememberMe) {
+                localStorage.setItem('rememberMe', 'true');
+            } else {
+                localStorage.removeItem('rememberMe');
+            }
+            
+            // Показываем сообщение об успехе
+            document.getElementById('successMessage').textContent = 'Вход выполнен успешно! Перенаправляем...';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Перенаправляем через 1 секунду
+            setTimeout(() => {
+                window.location.href = 'profile.html';
+            }, 1000);
+        });
+        
+        // Функция для показа уведомления о восстановлении пароля
+        function showForgotPassword() {
+            alert('В демо-версии функция восстановления пароля недоступна.\n\nДля входа используйте:\n• Имя пользователя: user1\n• Или зарегистрируйте новый аккаунт');
+            return false;
+        }
+        
+        // Проверка сохраненных данных при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const rememberMe = localStorage.getItem('rememberMe');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            if (rememberMe === 'true' && currentUser) {
+                document.querySelector('input[name="login"]').value = currentUser.username;
+                document.querySelector('input[name="remember"]').checked = true;
+            }
+        });
+        
+        // Показать ошибку
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+        
+        // Скрыть все ошибки
+        function hideAllErrors() {
+            const errors = document.querySelectorAll('.error-message');
+            errors.forEach(error => {
+                error.style.display = 'none';
+            });
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        // Проверка в реальном времени
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                const errorId = this.name + 'Error';
+                if (document.getElementById(errorId)) {
+                    document.getElementById(errorId).style.display = 'none';
+                }
+            });
+        });
+        if ((login === 'siteadmin' || email === 'admin@site.com') && password === '5541') {
+        // Успешный вход администратора
+        localStorage.setItem('currentUser', JSON.stringify({
+            username: 'siteadmin',
+            email: 'admin@site.com',
+            role: 'admin'
+        }));
+        localStorage.setItem('isLoggedIn', 'true');
+    
+        document.getElementById('successMessage').textContent = 'Вход администратора выполнен успешно!';
+        document.getElementById('successMessage').style.display = 'block';
+    
+        setTimeout(() => {
+           window.location.href = 'profile.html';
+        }, 1000);
+        return;
+        }
+    </script>
+</body>
+</html>

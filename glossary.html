@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Словарь терминов</title>
+    <style>
+        body { 
+            background: url(background.jpeg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .auth-links {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .nav-menu {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #FF5722, transparent);
+            margin: 20px 0;
+        }
+        .glossary-item {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #007BFF;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .glossary-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        dt {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #FF5722;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #FFE0B2;
+        }
+        dd {
+            font-size: 1.2em;
+            color: #333;
+            line-height: 1.6;
+            margin: 0 0 20px 20px;
+            padding: 10px;
+            background-color: rgba(240, 248, 255, 0.7);
+            border-radius: 5px;
+        }
+        .term-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #4CAF50, transparent);
+            margin: 10px 0;
+        }
+        .term-icon {
+            color: #FF5722;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .search-box {
+            background-color: rgba(240, 248, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #007BFF;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+        .search-input:focus {
+            border-color: #007BFF;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        .search-label {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+        .term-count {
+            text-align: center;
+            font-size: 1.1em;
+            color: #666;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: rgba(255, 245, 204, 0.7);
+            border-radius: 5px;
+        }
+        .info-note {
+            background-color: rgba(232, 245, 233, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-links">
+            <font face="monotype corsiva" size="5">
+                [<a href="login.html">Вход</a>] &nbsp;
+                [<a href="register.html">Регистрация</a>] &nbsp;
+                [<a href="profile.html">Личный кабинет</a>]
+            </font>
+        </div>
+
+        <h1>Компьютерные термины</h1>
+        <hr>
+        
+        <div class="content-box">
+            <div class="search-box">
+                <label class="search-label">🔍 Поиск терминов:</label>
+                <input type="text" id="searchTerm" class="search-input" placeholder="Введите термин для поиска...">
+            </div>
+            
+            <div class="term-count" id="termCounter">
+                Всего терминов: <span id="termCount">5</span>
+            </div>
+            
+            <div class="info-note">
+                <p style="margin: 0; font-size: 1.1em;">
+                    📚 <strong>Словарь терминов</strong> поможет вам разобраться в основных компьютерных понятиях. 
+                    Нажмите на термин, чтобы увидеть его определение.
+                </p>
+            </div>
+            
+            <div id="glossaryList">
+                <div class="glossary-item">
+                    <dt><span class="term-icon">⚡</span> Процессор</dt>
+                    <dd>Центральное устройство компьютера, производящее обработку информации в двоичном коде. Является "мозгом" компьютера, выполняющим все вычисления и управляющим работой других компонентов.</dd>
+                    <div class="term-divider"></div>
+                </div>
+                
+                <div class="glossary-item">
+                    <dt><span class="term-icon">💾</span> Память</dt>
+                    <dd>Устройство, в котором хранятся программы и данные. Бывает оперативной (временной) и постоянной (долговременной). Оперативная память используется для хранения данных во время работы компьютера, а постоянная — для долговременного хранения.</dd>
+                    <div class="term-divider"></div>
+                </div>
+                
+                <div class="glossary-item">
+                    <dt><span class="term-icon">🖥️</span> Системный блок</dt>
+                    <dd>Основной узел компьютера, внутри которого установлены наиболее важные компоненты: материнская плата, процессор, оперативная память, жесткий диск, блок питания и другие устройства.</dd>
+                    <div class="term-divider"></div>
+                </div>
+                
+                <div class="glossary-item">
+                    <dt><span class="term-icon">🔌</span> Материнская плата</dt>
+                    <dd>Основная плата, к которой подключаются все системное и периферийное оборудование. Содержит слоты для процессора, оперативной памяти, видеокарты и других компонентов, а также обеспечивает их взаимодействие.</dd>
+                    <div class="term-divider"></div>
+                </div>
+                
+                <div class="glossary-item">
+                    <dt><span class="term-icon">🎮</span> Видеокарта</dt>
+                    <dd>Устройство, позволяющее выводить текстовую и графическую информацию на монитор. Преобразует данные из оперативной памяти в видеосигнал для монитора. Современные видеокарты также используются для сложных вычислений в играх и графических приложениях.</dd>
+                    <div class="term-divider"></div>
+                </div>
+            </div>
+            
+            <div class="info-note">
+                <h3>📝 Хотите добавить термин?</h3>
+                <p>Если вы знаете важный компьютерный термин, которого нет в нашем словаре, напишите нам на <a href="mailto:kolyachep777@mail.ru">почту</a> с предложением!</p>
+            </div>
+        </div>
+        
+        <div class="nav-menu">
+            <p align="center">
+                <font face="monotype corsiva" size="8">
+                    [<a href="index.html">Главная</a>] &nbsp;
+                    [<a href="software.html">Программы</a>] &nbsp;
+                    [<a href="hardware.html">Комплектующие</a>] &nbsp;
+                    [<a href="profile.html">Личный кабинет</a>]
+                </font>
+            </p>
+        </div>
+        
+        <br>
+        <address align="center">
+            <font face="monotype corsiva" size="6">
+                <a href="mailto:kolyachep777@mail.ru">Напишите нам на почту</a>
+            </font>
+        </address>
+    </div>
+    
+    <script>
+        // Функция поиска терминов
+        document.getElementById('searchTerm').addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            const terms = document.querySelectorAll('.glossary-item');
+            let visibleCount = 0;
+            
+            terms.forEach(term => {
+                const termText = term.textContent.toLowerCase();
+                if (termText.includes(searchText) || searchText === '') {
+                    term.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    term.style.display = 'none';
+                }
+            });
+            
+            // Обновляем счетчик
+            document.getElementById('termCount').textContent = visibleCount;
+            document.getElementById('termCounter').innerHTML = 
+                searchText ? `Найдено терминов: <strong>${visibleCount}</strong>` : 
+                `Всего терминов: <span id="termCount">${visibleCount}</span>`;
+        });
+        
+        // Подсчет терминов при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const terms = document.querySelectorAll('.glossary-item');
+            document.getElementById('termCount').textContent = terms.length;
+        });
+        
+        // Анимация при клике на термин
+        document.querySelectorAll('.glossary-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.backgroundColor = 'rgba(240, 248, 255, 0.9)';
+                setTimeout(() => {
+                    this.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>

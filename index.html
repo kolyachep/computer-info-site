@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Всё о компьютере</title>
+    <style>
+        body { 
+            background: url(background.jpeg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .auth-links {
+            text-align: right;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 5px;
+        }
+        .nav-menu {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #4CAF50;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #4CAF50, transparent);
+            margin: 20px 0;
+        }
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .text-content {
+            flex: 2;
+            min-width: 300px;
+        }
+        .image-content {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        .welcome-text {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .featured-image {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        .admin-notice {
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+        }
+        .site-stats {
+            background-color: rgba(240, 248, 255, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #b0d4ff;
+        }
+        .stat-item {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .quick-link {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            border: 2px solid #4CAF50;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .quick-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background-color: #f9f9f9;
+        }
+        .link-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .link-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        .link-desc {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .user-status {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        .admin-status {
+            background-color: #dc3545;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .quick-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-links">
+            <font face="monotype corsiva" size="5">
+                [<a href="login.html">Вход</a>] &nbsp;
+                [<a href="register.html">Регистрация</a>] &nbsp;
+                [<a href="profile.html">Личный кабинет</a>] &nbsp;
+                [<span id="userStatus">Гость</span>]
+            </font>
+        </div>
+
+        <h1>Всё о компьютере</h1>
+        <hr>
+        
+        <div class="content-box">
+            <div class="admin-notice" id="adminNotice">
+                <strong>👑 Вы вошли как администратор!</strong> Доступны дополнительные функции в <a href="profile.html">личном кабинете</a>.
+            </div>
+            
+            <div class="site-stats" id="siteStats">
+                <h3 style="margin-top: 0; color: #007BFF;">📊 Статистика сайта:</h3>
+                <div class="stat-item" id="userCount">Зарегистрировано пользователей: <strong>Загрузка...</strong></div>
+                <div class="stat-item" id="lastUser">Последний пользователь: <strong>Загрузка...</strong></div>
+            </div>
+            
+            <div class="main-content">
+                <div class="text-content">
+                    <p class="welcome-text" align="left">
+                        На этом сайте вы сможете получить <i>различную информацию</i> о компьютере, 
+                        его программном обеспечении и ценах на компьютерные комплектующие.
+                    </p>
+                    
+                    <p class="welcome-text" align="left">
+                        Терминологический словарь познакомит вас с <b>компьютерными терминами</b>, 
+                        а также вы сможете зарегистрироваться и получить доступ к личному кабинету.
+                    </p>
+                    
+                    <div class="quick-links">
+                        <a href="software.html" class="quick-link">
+                            <span class="link-icon">💾</span>
+                            <div class="link-title">Программы</div>
+                            <div class="link-desc">Системное и прикладное ПО</div>
+                        </a>
+                        
+                        <a href="hardware.html" class="quick-link">
+                            <span class="link-icon">⚙️</span>
+                            <div class="link-title">Комплектующие</div>
+                            <div class="link-desc">Железо и характеристики</div>
+                        </a>
+                        
+                        <a href="glossary.html" class="quick-link">
+                            <span class="link-icon">📚</span>
+                            <div class="link-title">Словарь</div>
+                            <div class="link-desc">Компьютерные термины</div>
+                        </a>
+                        
+                        <a href="profile.html" class="quick-link">
+                            <span class="link-icon">👤</span>
+                            <div class="link-title">Личный кабинет</div>
+                            <div class="link-desc">Ваш профиль и настройки</div>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="image-content">
+                    <img src="computer.jpeg" alt="Компьютер" class="featured-image" width="400" height="300" title="Современный компьютер">
+                    <p style="margin-top: 15px; font-style: italic; color: #666;">
+                        Современный компьютер - универсальное устройство для работы, учебы и развлечений
+                    </p>
+                </div>
+            </div>
+            
+            <div style="background-color: rgba(232, 245, 233, 0.7); padding: 20px; border-radius: 8px; margin-top: 30px; border-left: 5px solid #4CAF50;">
+                <h3 style="margin-top: 0; color: #333;">🎯 Что вы найдете на сайте:</h3>
+                <ul style="font-size: 1.1em; line-height: 1.6;">
+                    <li><strong>Подробное руководство</strong> по программному обеспечению</li>
+                    <li><strong>Технические характеристики</strong> компьютерных комплектующих</li>
+                    <li><strong>Терминологический словарь</strong> с объяснениями понятий</li>
+                    <li><strong>Личный кабинет</strong> с возможностью регистрации</li>
+                    <li><strong>Административные функции</strong> для управления сайтом</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="nav-menu">
+            <p align="center">
+                <font face="monotype corsiva" size="8">
+                    [<a href="software.html">Программы</a>] &nbsp;
+                    [<a href="glossary.html">Словарь</a>] &nbsp;
+                    [<a href="hardware.html">Комплектующие</a>] &nbsp;
+                    [<a href="profile.html">Личный кабинет</a>]
+                </font>
+            </p>
+        </div>
+        
+        <br><br>
+        <address align="center">
+            <font face="monotype corsiva" size="6">
+                <a href="mailto:kolyachep777@mail.ru">Напишите нам на почту</a>
+            </font>
+        </address>
+    </div>
+    
+    <script>
+        // Проверка статуса пользователя при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserStatus();
+            loadSiteStats();
+            
+            // Обновляем статус каждые 30 секунд
+            setInterval(updateUserStatus, 30000);
+            setInterval(loadSiteStats, 60000);
+        });
+        
+        // Обновление статуса пользователя
+        function updateUserStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const userStatusElement = document.getElementById('userStatus');
+            const adminNotice = document.getElementById('adminNotice');
+            
+            if (isLoggedIn === 'true' && currentUser.username) {
+                // Проверяем, является ли пользователь администратором
+                const isAdmin = currentUser.role === 'admin' || currentUser.username === 'siteadmin';
+                
+                let statusText = currentUser.username;
+                let statusClass = 'user-status';
+                
+                if (isAdmin) {
+                    statusText += ' (Админ)';
+                    statusClass += ' admin-status';
+                    // Показываем уведомление для администратора
+                    adminNotice.style.display = 'block';
+                }
+                
+                userStatusElement.innerHTML = statusText;
+                userStatusElement.className = statusClass;
+            } else {
+                userStatusElement.textContent = 'Гость';
+                userStatusElement.className = '';
+                adminNotice.style.display = 'none';
+            }
+        }
+        
+        // Загрузка статистики сайта
+        function loadSiteStats() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userCountElement = document.getElementById('userCount');
+            const lastUserElement = document.getElementById('lastUser');
+            
+            if (users.length === 0) {
+                // Автоматически создаем администратора, если пользователей нет
+                const adminUser = {
+                    username: 'siteadmin',
+                    email: 'admin@site.com',
+                    password: '5541',
+                    registeredAt: new Date().toISOString(),
+                    role: 'admin'
+                };
+                users.push(adminUser);
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            // Обновляем статистику
+            userCountElement.innerHTML = `Зарегистрировано пользователей: <strong>${users.length}</strong>`;
+            
+            // Находим последнего зарегистрированного пользователя
+            if (users.length > 0) {
+                // Сортируем пользователей по дате регистрации (от новых к старым)
+                const sortedUsers = [...users].sort((a, b) => {
+                    const dateA = new Date(a.registeredAt || 0);
+                    const dateB = new Date(b.registeredAt || 0);
+                    return dateB - dateA;
+                });
+                
+                const lastUser = sortedUsers[0];
+                lastUserElement.innerHTML = `Последний пользователь: <strong>${lastUser.username}</strong>`;
+            } else {
+                lastUserElement.innerHTML = `Последний пользователь: <strong>Нет данных</strong>`;
+            }
+            
+            // Обновляем статус пользователя
+            updateUserStatus();
+        }
+        
+        // Функция для быстрого переключения между пользователями (для тестирования)
+        function switchToAdmin() {
+            if (confirm('Переключиться на аккаунт администратора?\n\nЛогин: siteadmin\nПароль: 5541')) {
+                localStorage.setItem('currentUser', JSON.stringify({
+                    username: 'siteadmin',
+                    email: 'admin@site.com',
+                    role: 'admin'
+                }));
+                localStorage.setItem('isLoggedIn', 'true');
+                alert('Переключено на администратора!');
+                window.location.reload();
+            }
+        }
+        
+        // Добавляем обработчик для двойного клика на статусе пользователя (скрытая функция)
+        document.getElementById('userStatus').addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            
+            if (isLoggedIn === 'true') {
+                if (confirm('Хотите выйти из аккаунта?')) {
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('currentUser');
+                    alert('Вы вышли из аккаунта');
+                    window.location.reload();
+                }
+            } else {
+                if (confirm('Хотите быстро войти как администратор?\n(скрытая функция для тестирования)')) {
+                    switchToAdmin();
+                }
+            }
+        });
+        
+        // Показываем всплывающую подсказку при наведении на статус
+        document.getElementById('userStatus').addEventListener('mouseover', function() {
+            this.title = 'Двойной клик для быстрого переключения аккаунта';
+        });
+        
+        // Проверяем, не первый ли это визит
+        if (!localStorage.getItem('firstVisit')) {
+            localStorage.setItem('firstVisit', 'true');
+            setTimeout(function() {
+                alert('👋 Добро пожаловать на сайт "Всё о компьютере"!\n\nДля тестирования доступен администратор:\nЛогин: siteadmin\nПароль: 5541\n\nДвойной клик по статусу пользователя открывает скрытые функции.');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

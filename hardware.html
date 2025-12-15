@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Комплектующие компьютера</title>
+    <style>
+        body { 
+            background: url(background.jpeg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .auth-links {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .nav-menu {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin: 30px 0 20px 0;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #4CAF50, transparent);
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.1em;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        tr:nth-child(even) {
+            background-color: rgba(240, 248, 255, 0.7);
+        }
+        tr:hover {
+            background-color: rgba(245, 245, 245, 0.9);
+        }
+        .schema-image {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .schema-image img {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        .info-box {
+            background-color: rgba(240, 248, 255, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #b0d4ff;
+        }
+        .note {
+            background-color: rgba(255, 245, 204, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #FFC107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-links">
+            <font face="monotype corsiva" size="5">
+                [<a href="login.html">Вход</a>] &nbsp;
+                [<a href="register.html">Регистрация</a>] &nbsp;
+                [<a href="profile.html">Личный кабинет</a>]
+            </font>
+        </div>
+
+        <h1>Комплектующие компьютера</h1>
+        <hr>
+        
+        <div class="content-box">
+            <h2>Структурно-функциональная схема компьютера</h2>
+            <div class="schema-image">
+                <img src="struktura.gif" alt="Структурная схема компьютера" title="Структура компьютера">
+            </div>
+            
+            <div class="info-box">
+                <p style="font-size: 1.2em; text-align: center; color: #333;">
+                    <strong>Структурная схема</strong> показывает основные компоненты компьютера и их взаимодействие. 
+                    Каждый блок выполняет определенные функции в процессе обработки информации.
+                </p>
+            </div>
+            
+            <h2>Основные технические характеристики ПК</h2>
+            
+            <div class="note">
+                <p style="margin: 0; font-size: 1.1em;">
+                    💡 <strong>Важно:</strong> Технические характеристики определяют производительность и возможности компьютера. 
+                    При выборе ПК обращайте внимание на все параметры, указанные в таблице.
+                </p>
+            </div>
+            
+            <table border="1">
+                <tr>
+                    <th>№ п/п</th>
+                    <th>ОСНОВНЫЕ ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ ПК</th>
+                    <th>ОТ ЧЕГО ЗАВИСИТ ХАРАКТЕРИСТИКА</th>
+                </tr>
+                <tr>
+                    <td align="center">1</td>
+                    <td align="center">Тип процессора</td>
+                    <td align="center">От используемой мат. платы</td>
+                </tr>
+                <tr>
+                    <td align="center">2</td>
+                    <td align="center">Быстродействие (тактовая частота, разрядность процессора и системной шины)</td>
+                    <td align="center">От процессора</td>
+                </tr>
+                <tr>
+                    <td align="center">3</td>
+                    <td align="center">Объём, тип оперативной памяти и возможность её наращивания</td>
+                    <td align="center">От используемой мат. платы</td>
+                </tr>
+                <tr>
+                    <td align="center">4</td>
+                    <td align="center">Объем внешней памяти, число и типы встроенных дисководов</td>
+                    <td align="center">От вида корпуса компьютера</td>
+                </tr>
+                <tr>
+                    <td align="center">5</td>
+                    <td align="center">Объём видеопамяти графического адаптера, цветовая палитра и разрешающая способность</td>
+                    <td align="center">От используемой мат. платы</td>
+                </tr>
+                <tr>
+                    <td align="center">6</td>
+                    <td align="center">Тип дисплея, размер и разрешающая способность</td>
+                    <td align="center">От технологии, которая была применена при создании</td>
+                </tr>
+                <tr>
+                    <td align="center">7</td>
+                    <td align="center">Номенклатура и типы портов ввода-вывода</td>
+                    <td align="center">От используемой мат. платы</td>
+                </tr>
+                <tr>
+                    <td align="center">8</td>
+                    <td align="center">Состав доп. оборудования (звуковая плата, модем, сетевая карта)</td>
+                    <td align="center">От используемой мат. платы</td>
+                </tr>
+                <tr>
+                    <td align="center">9</td>
+                    <td align="center">Кол-во слотов расширения на системной плате</td>
+                    <td align="center">От используемой мат. платы</td>
+                </tr>
+                <tr>
+                    <td align="center">10</td>
+                    <td align="center">Мощность блока питания</td>
+                    <td align="center">От используемой мат. платы</td>
+                </tr>
+                <tr>
+                    <td align="center">11</td>
+                    <td align="center">Эргономика и комфорт работы с мышью и клавиатурой</td>
+                    <td align="center">От задумки дизайнера</td>
+                </tr>
+                <tr>
+                    <td align="center">12</td>
+                    <td align="center">Дизайн и тип корпуса системного блока</td>
+                    <td align="center">От задумки дизайнера, от используемой мат. платы</td>
+                </tr>
+                <tr>
+                    <td align="center">13</td>
+                    <td align="center">Возможность модернизации компьютера</td>
+                    <td align="center">От используемой мат. платы</td>
+                </tr>
+                <tr>
+                    <td align="center">14</td>
+                    <td align="center">Надежность (наработка на отказ) компьютера</td>
+                    <td align="center">От надежности и кол-ва его комплектующих, от пользователя компьютера</td>
+                </tr>
+                <tr>
+                    <td align="center">15</td>
+                    <td align="center">Соответствие современным санитарным нормам и требованиям электробезопасности</td>
+                    <td align="center">От руководителя организации, от человека, работающего за этим рабочим местом</td>
+                </tr>
+                <tr>
+                    <td align="center">16</td>
+                    <td align="center">Состав и полнота сопроводительной тех. документации</td>
+                    <td align="center">От производителя</td>
+                </tr>
+                <tr>
+                    <td align="center">17</td>
+                    <td align="center">Гарантийные обязательства производителя и поставщика</td>
+                    <td align="center">От используемой мат. платы, от типа корпуса компьютера</td>
+                </tr>
+            </table>
+            
+            <div class="info-box">
+                <h3>🔧 Советы по выбору комплектующих:</h3>
+                <ul style="font-size: 1.1em;">
+                    <li>Выбирайте совместимые компоненты</li>
+                    <li>Обращайте внимание на производителей с хорошей репутацией</li>
+                    <li>Проверяйте наличие гарантии</li>
+                    <li>Учитывайте будущие потребности в апгрейде</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="nav-menu">
+            <p align="center">
+                <font face="monotype corsiva" size="8">
+                    [<a href="index.html">Главная</a>] &nbsp;
+                    [<a href="software.html">Программы</a>] &nbsp;
+                    [<a href="glossary.html">Словарь</a>] &nbsp;
+                    [<a href="profile.html">Личный кабинет</a>]
+                </font>
+            </p>
+        </div>
+        
+        <br>
+        <address align="center">
+            <font face="monotype corsiva" size="6">
+                <a href="mailto:kolyachep777@mail.ru">Напишите нам на почту</a>
+            </font>
+        </address>
+    </div>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <style>
+        body { 
+            background: url(background.jpeg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #4CAF50, transparent);
+            margin: 20px 0;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .nav-links {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .nav-links a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-family: 'Monotype Corsiva', cursive;
+            font-size: 18px;
+            margin: 0 10px;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .success-message {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Регистрация</h1>
+        <hr>
+        
+        <form id="registerForm">
+            <div class="form-group">
+                <label>Имя пользователя:</label>
+                <input type="text" name="username" required 
+                       placeholder="Введите имя пользователя" 
+                       minlength="3" maxlength="20">
+                <div class="error-message" id="usernameError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" name="email" required 
+                       placeholder="Введите ваш email">
+                <div class="error-message" id="emailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Пароль:</label>
+                <input type="password" name="password" required 
+                       placeholder="Введите пароль" 
+                       minlength="6">
+                <div class="error-message" id="passwordError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Подтверждение пароля:</label>
+                <input type="password" name="confirm_password" required 
+                       placeholder="Повторите пароль">
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+            
+            <div class="form-group">
+                <input type="checkbox" name="agreement" id="agreement" required>
+                <label for="agreement" style="display: inline; font-weight: normal;">
+                    Я согласен с условиями пользовательского соглашения
+                </label>
+            </div>
+            
+            <button type="submit" class="btn">Зарегистрироваться</button>
+            <div class="success-message" id="successMessage"></div>
+        </form>
+        
+        <div class="nav-links">
+            <a href="index.html">На главную</a> &nbsp; | &nbsp;
+            <a href="login.html">Уже есть аккаунт? Войти</a>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Скрываем все предыдущие сообщения об ошибках
+            hideAllErrors();
+            
+            const username = this.username.value.trim();
+            const email = this.email.value.trim();
+            const password = this.password.value;
+            const confirmPassword = this.confirm_password.value;
+            
+            let isValid = true;
+            
+            // Проверка имени пользователя
+            if (username.length < 3) {
+                showError('usernameError', 'Имя пользователя должно быть не менее 3 символов');
+                isValid = false;
+            }
+            
+            if (!isValidUsername(username)) {
+                showError('usernameError', 'Имя пользователя может содержать только буквы, цифры и символы _-');
+                isValid = false;
+            }
+            
+            // Проверка email
+            if (!isValidEmail(email)) {
+                showError('emailError', 'Введите корректный email адрес');
+                isValid = false;
+            }
+            
+            // Проверка пароля
+            if (password.length < 6) {
+                showError('passwordError', 'Пароль должен быть не менее 6 символов');
+                isValid = false;
+            }
+            
+            // Проверка совпадения паролей
+            if (password !== confirmPassword) {
+                showError('confirmPasswordError', 'Пароли не совпадают');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // Проверяем, нет ли уже пользователя с таким email или именем
+            const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+            const userExists = existingUsers.some(user => 
+                user.email === email || user.username === username
+            );
+            
+            if (userExists) {
+                showError('emailError', 'Пользователь с таким email или именем уже существует');
+                return;
+            }
+            
+            // Сохраняем нового пользователя
+            const userData = {
+                username: username,
+                email: email,
+                password: password, // В реальном приложении пароль нужно хэшировать!
+                registeredAt: new Date().toISOString()
+            };
+            
+            existingUsers.push(userData);
+            localStorage.setItem('users', JSON.stringify(existingUsers));
+            
+            // Сохраняем текущую сессию
+            localStorage.setItem('currentUser', JSON.stringify({
+                username: username,
+                email: email
+            }));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Показываем сообщение об успехе
+            document.getElementById('successMessage').textContent = 'Регистрация успешна! Перенаправляем...';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Перенаправляем через 1 секунду
+            setTimeout(() => {
+                window.location.href = 'profile.html';
+            }, 1000);
+        });
+        
+        // Валидация имени пользователя
+        function isValidUsername(username) {
+            const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+            return usernameRegex.test(username);
+        }
+        
+        // Валидация email
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Показать ошибку
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+        
+        // Скрыть все ошибки
+        function hideAllErrors() {
+            const errors = document.querySelectorAll('.error-message');
+            errors.forEach(error => {
+                error.style.display = 'none';
+            });
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        // Проверка в реальном времени
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                const errorId = this.name + 'Error';
+                if (document.getElementById(errorId)) {
+                    document.getElementById(errorId).style.display = 'none';
+                }
+            });
+        });
+        if (existingUsers.length === 0) {
+        const adminUser = {
+            username: 'siteadmin',
+            email: 'admin@site.com',
+            password: '5541',
+            registeredAt: new Date().toISOString(),
+            role: 'admin'
+            };
+        existingUsers.push(adminUser);
+        localStorage.setItem('users', JSON.stringify(existingUsers));
+        }
+    </script>
+</body>
+</html>

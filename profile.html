@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    <style>
+        body { 
+            background: url(background.jpeg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        .profile-header {
+            background-color: rgba(0, 100, 200, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: relative;
+            border-left: 5px solid #4CAF50;
+        }
+        .admin-header {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-left: 5px solid #dc3545;
+        }
+        .profile-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .profile-info {
+            flex: 1;
+            min-width: 300px;
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .profile-links {
+            flex: 1;
+            min-width: 300px;
+            background-color: #f0f8ff;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #b0d4ff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .admin-section {
+            background-color: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .nav-box {
+            background-color: white;
+            padding: 18px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border-left: 5px solid #4CAF50;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .nav-box:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left-color: #007BFF;
+        }
+        .btn-logout {
+            background-color: #dc3545;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            position: absolute;
+            top: 25px;
+            right: 25px;
+        }
+        .btn-logout:hover {
+            background-color: #c82333;
+        }
+        .btn-admin {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        .btn-admin:hover {
+            background-color: #c82333;
+        }
+        .bug-report {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0 0 15px 0;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin-top: 0;
+            font-size: 1.8em;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .admin-title {
+            border-bottom: 2px solid #dc3545;
+            color: #dc3545;
+        }
+        h3 {
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+        .user-greeting {
+            text-align: center;
+            font-size: 1.4em;
+            color: #333;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .admin-badge {
+            background-color: #dc3545;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .user-info {
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+        .user-info p {
+            margin: 12px 0;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .user-info strong {
+            color: #333;
+            display: inline-block;
+            width: 200px;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: #007BFF;
+            font-family: 'Monotype Corsiva', cursive;
+            font-size: 1.3em;
+            display: block;
+        }
+        .nav-desc {
+            color: #666;
+            font-size: 0.9em;
+            margin: 5px 0 0 20px;
+            font-style: italic;
+        }
+        .email-link {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .email-link:hover {
+            text-decoration: underline;
+        }
+        .welcome-icon {
+            font-size: 2em;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .info-icon {
+            color: #4CAF50;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .admin-icon {
+            color: #dc3545;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .action-buttons {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+        .btn-action {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-action:hover {
+            background-color: #5a6268;
+            text-decoration: none;
+            color: white;
+        }
+        .btn-edit {
+            background-color: #17a2b8;
+        }
+        .btn-edit:hover {
+            background-color: #138496;
+        }
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        .users-table th {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        .users-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .users-table tr:nth-child(even) {
+            background-color: rgba(220, 53, 69, 0.05);
+        }
+        .users-table tr:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+        .admin-only {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .profile-content {
+                flex-direction: column;
+            }
+            .btn-logout {
+                position: static;
+                margin-top: 15px;
+                width: 100%;
+            }
+            .profile-header {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-header" id="profileHeader">
+            <button class="btn-logout" onclick="logout()">Выйти из аккаунта</button>
+            
+            <h1>Личный кабинет</h1>
+            
+            <div class="user-greeting" id="userGreeting">
+                <!-- Сюда будет вставлено приветствие -->
+            </div>
+        </div>
+        
+        <div class="profile-content">
+            <div class="profile-info">
+                <h2 id="infoTitle">📋 Ваши данные</h2>
+                <hr style="margin: 15px 0; border-color: #eee;">
+                <div class="user-info" id="userInfo">
+                    <!-- Сюда будут загружены данные пользователя -->
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="register.html" class="btn-action btn-edit">✏️ Редактировать профиль</a>
+                    <a href="#" class="btn-action" onclick="changePassword()">🔒 Сменить пароль</a>
+                </div>
+                
+                <!-- Административная секция -->
+                <div class="admin-only" id="adminSection">
+                    <div class="admin-section">
+                        <h2 class="admin-title">👑 Панель администратора</h2>
+                        <hr style="margin: 10px 0; border-color: #ffc107;">
+                        
+                        <div style="margin-bottom: 15px;">
+                            <button class="btn-admin" onclick="showAllUsers()">👥 Показать всех пользователей</button>
+                            <button class="btn-admin" onclick="clearAllUsers()">🗑️ Очистить всех пользователей</button>
+                            <button class="btn-admin" onclick="resetSite()">🔄 Сбросить сайт</button>
+                        </div>
+                        
+                        <div id="usersList" style="display: none;">
+                            <h3>Зарегистрированные пользователи:</h3>
+                            <table class="users-table" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Имя пользователя</th>
+                                        <th>Email</th>
+                                        <th>Роль</th>
+                                        <th>Дата регистрации</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Сюда будут загружены пользователи -->
+                                </tbody>
+                            </table>
+                            <p style="margin-top: 10px; font-size: 0.9em; color: #666;" id="usersCount"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-links">
+                <h2>🧭 Навигация по сайту</h2>
+                <hr style="margin: 15px 0; border-color: #eee;">
+                
+                <div class="nav-box">
+                    <a href="index.html" class="nav-link">
+                        <span class="info-icon">🏠</span> Главная страница
+                    </a>
+                    <div class="nav-desc">Вернуться на главную страницу сайта</div>
+                </div>
+                
+                <div class="nav-box">
+                    <a href="software.html" class="nav-link">
+                        <span class="info-icon">💾</span> Программное обеспечение
+                    </a>
+                    <div class="nav-desc">Системные и прикладные программы, системы программирования</div>
+                </div>
+                
+                <div class="nav-box">
+                    <a href="hardware.html" class="nav-link">
+                        <span class="info-icon">⚙️</span> Комплектующие компьютера
+                    </a>
+                    <div class="nav-desc">Структурная схема и технические характеристики</div>
+                </div>
+                
+                <div class="nav-box">
+                    <a href="glossary.html" class="nav-link">
+                        <span class="info-icon">📚</span> Терминологический словарь
+                    </a>
+                    <div class="nav-desc">Компьютерные термины и их определения</div>
+                </div>
+                
+                <div class="nav-box">
+                    <a href="register.html" class="nav-link">
+                        <span class="info-icon">👤</span> Управление аккаунтом
+                    </a>
+                    <div class="nav-desc">Регистрация нового пользователя или редактирование профиля</div>
+                </div>
+                
+                <!-- Административные ссылки -->
+                <div class="nav-box admin-only" id="adminNav">
+                    <a href="#" class="nav-link" onclick="showAllUsers()">
+                        <span class="admin-icon">👑</span> Административная панель
+                    </a>
+                    <div class="nav-desc">Управление пользователями и настройки сайта</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bug-report">
+            <h3>📩 Обратная связь</h3>
+            <p>Если нашли ошибку (баг) или есть идеи по улучшению сайта, пишите нам на <a href="mailto:kolyachep777@mail.ru" class="email-link">почту</a></p>
+            <p><small>Мы ценим ваше мнение и постараемся ответить в кратчайшие сроки!</small></p>
+        </div>
+    </div>
+    
+    <script>
+        // Проверка авторизации
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                alert('Для доступа к личному кабинету необходимо авторизоваться');
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+        
+        // Проверка администратора
+        function checkAdmin() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            return currentUser.role === 'admin' || currentUser.username === 'siteadmin';
+        }
+        
+        // Загрузка данных пользователя
+        function loadUserData() {
+            if (!checkAuth()) return;
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.username === currentUser.username);
+            
+            const greeting = document.getElementById('userGreeting');
+            const userInfo = document.getElementById('userInfo');
+            const profileHeader = document.getElementById('profileHeader');
+            const adminSection = document.getElementById('adminSection');
+            const adminNav = document.getElementById('adminNav');
+            const infoTitle = document.getElementById('infoTitle');
+            
+            // Проверяем, является ли пользователь администратором
+            const isAdmin = checkAdmin();
+            
+            if (user || currentUser.username) {
+                const displayUser = user || currentUser;
+                const isUserAdmin = isAdmin || displayUser.role === 'admin';
+                
+                // Обновляем заголовок для администратора
+                if (isUserAdmin) {
+                    profileHeader.classList.add('admin-header');
+                    infoTitle.innerHTML = '👑 Данные администратора';
+                }
+                
+                // Приветствие с бейджем администратора
+                let greetingText = `<span class="welcome-icon">👋</span> Добро пожаловать, <strong>${displayUser.username}</strong>!`;
+                if (isUserAdmin) {
+                    greetingText += ` <span class="admin-badge">АДМИНИСТРАТОР</span>`;
+                }
+                greeting.innerHTML = greetingText;
+                
+                // Форматирование даты
+                const regDate = displayUser.registeredAt ? new Date(displayUser.registeredAt) : new Date();
+                const formattedDate = regDate.toLocaleDateString('ru-RU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Отображение данных
+                let userInfoHTML = `
+                    <p><span class="info-icon">👤</span> <strong>Имя пользователя:</strong> ${displayUser.username}</p>
+                    <p><span class="info-icon">📧</span> <strong>Email:</strong> ${displayUser.email || 'Не указан'}</p>
+                    <p><span class="info-icon">📅</span> <strong>Дата регистрации:</strong> ${formattedDate}</p>
+                    <p><span class="info-icon">⏱️</span> <strong>В системе:</strong> ${calculateDaysSince(regDate)}</p>
+                `;
+                
+                if (isUserAdmin) {
+                    userInfoHTML += `<p><span class="admin-icon">👑</span> <strong>Роль:</strong> Администратор</p>`;
+                }
+                
+                userInfo.innerHTML = userInfoHTML;
+                
+                // Показываем административные элементы
+                if (isUserAdmin) {
+                    adminSection.style.display = 'block';
+                    adminNav.style.display = 'block';
+                    
+                    // Загружаем список пользователей
+                    loadUsersList();
+                }
+            } else {
+                greeting.innerHTML = `<span class="welcome-icon">👋</span> Добро пожаловать в личный кабинет!`;
+                userInfo.innerHTML = `
+                    <p><span class="info-icon">⚠️</span> Данные профиля не найдены</p>
+                    <p>Заполните данные в форме <a href="register.html" class="email-link">регистрации</a></p>
+                `;
+            }
+        }
+        
+        // Загрузка списка пользователей
+        function loadUsersList() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const tableBody = document.getElementById('usersTableBody');
+            
+            if (users.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Нет зарегистрированных пользователей</td></tr>';
+                return;
+            }
+            
+            let tableHTML = '';
+            users.forEach((user, index) => {
+                const regDate = user.registeredAt ? new Date(user.registeredAt).toLocaleDateString('ru-RU') : 'Не указана';
+                const role = user.role === 'admin' || user.username === 'siteadmin' ? 'Администратор' : 'Пользователь';
+                const rowClass = user.username === 'siteadmin' ? 'style="background-color: rgba(255, 193, 7, 0.2);"' : '';
+                
+                tableHTML += `
+                    <tr ${rowClass}>
+                        <td>${index + 1}</td>
+                        <td>${user.username} ${user.username === 'siteadmin' ? '👑' : ''}</td>
+                        <td>${user.email || 'Не указан'}</td>
+                        <td>${role}</td>
+                        <td>${regDate}</td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = tableHTML;
+            document.getElementById('usersCount').textContent = `Всего пользователей: ${users.length}`;
+        }
+        
+        // Показать всех пользователей
+        function showAllUsers() {
+            const usersList = document.getElementById('usersList');
+            if (usersList.style.display === 'none') {
+                usersList.style.display = 'block';
+                loadUsersList();
+            } else {
+                usersList.style.display = 'none';
+            }
+        }
+        
+        // Очистить всех пользователей (кроме администратора)
+        function clearAllUsers() {
+            if (!confirm('Вы уверены, что хотите удалить всех пользователей (кроме администратора)?')) {
+                return;
+            }
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const adminUsers = users.filter(user => user.role === 'admin' || user.username === 'siteadmin');
+            
+            localStorage.setItem('users', JSON.stringify(adminUsers));
+            alert(`Удалено ${users.length - adminUsers.length} пользователей. Остался только администратор.`);
+            
+            // Обновляем список
+            loadUsersList();
+        }
+        
+        // Сбросить сайт (очистить все данные)
+        function resetSite() {
+            if (!confirm('ВНИМАНИЕ! Вы уверены, что хотите полностью сбросить сайт?\n\nБудут удалены:\n• Все пользователи\n• Все настройки\n• Данные сессий\n\nПосле сброса будет создан только администратор с данными:\nЛогин: siteadmin\nEmail: admin@site.com\nПароль: 5541')) {
+                return;
+            }
+            
+            // Очищаем все данные
+            localStorage.clear();
+            
+            // Создаем администратора по умолчанию
+            const adminUser = {
+                username: 'siteadmin',
+                email: 'admin@site.com',
+                password: '5541',
+                registeredAt: new Date().toISOString(),
+                role: 'admin'
+            };
+            
+            localStorage.setItem('users', JSON.stringify([adminUser]));
+            localStorage.setItem('currentUser', JSON.stringify({
+                username: 'siteadmin',
+                email: 'admin@site.com',
+                role: 'admin'
+            }));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            alert('Сайт успешно сброшен! Вы вошли как администратор.');
+            window.location.reload();
+        }
+        
+        // Расчет количества дней в системе
+        function calculateDaysSince(date) {
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) return '1 день';
+            if (diffDays < 30) return `${diffDays} дней`;
+            
+            const months = Math.floor(diffDays / 30);
+            if (months === 1) return '1 месяц';
+            if (months < 12) return `${months} месяцев`;
+            
+            const years = Math.floor(months / 12);
+            const remainingMonths = months % 12;
+            
+            if (remainingMonths === 0) {
+                return years === 1 ? '1 год' : `${years} лет`;
+            } else {
+                return years === 1 ? 
+                    `1 год и ${remainingMonths} месяцев` : 
+                    `${years} лет и ${remainingMonths} месяцев`;
+            }
+        }
+        
+        // Выход из системы
+        function logout() {
+            if (confirm('Вы уверены, что хотите выйти из аккаунта?')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Смена пароля (демо-функция)
+        function changePassword() {
+            alert('В демо-версии функция смены пароля недоступна.\n\nДля изменения пароля:\n1. Выйдите из аккаунта\n2. Зарегистрируйтесь заново с новым паролем\n\nВ реальном приложении здесь была бы форма смены пароля с проверкой старого пароля.');
+        }
+        
+        // Загружаем данные при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadUserData);
+        
+        // Обновляем данные каждую минуту (для актуальности "В системе")
+        setInterval(() => {
+            const userInfo = document.getElementById('userInfo');
+            if (userInfo && userInfo.innerHTML.includes('В системе:')) {
+                loadUserData();
+            }
+        }, 60000);
+    </script>
+</body>
+</html>
