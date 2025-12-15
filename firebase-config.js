@@ -2,14 +2,14 @@
 
 // 1. Конфигурация Firebase (ЗАМЕНИТЕ НА СВОЮ!)
 const firebaseConfig = {
-    apiKey: "AIzaSyA1B2C3d4E5F6G7H8I9J0K1L2M3N4O5P6Q",
-    authDomain: "computer-site-12345.firebaseapp.com",
-    databaseURL: "https://computer-site-12345-default-rtdb.firebaseio.com",
-    projectId: "computer-site-12345",
-    storageBucket: "computer-site-12345.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdef1234567890abcdef"
-};
+    apiKey: "AIzaSyBnfw0Ibphp5E0AB8xT4Fe5NMfVOyuOuEM",
+    authDomain: "computer-info-site.firebaseapp.com",
+    projectId: "computer-info-site",
+    storageBucket: "computer-info-site.firebasestorage.app",
+    messagingSenderId: "762797842096",
+    appId: "1:762797842096:web:0a8327c726787a799b2575",
+    measurementId: "G-Q4HPBS1YPW"
+  };
 
 // 2. Инициализация Firebase
 firebase.initializeApp(firebaseConfig);
